@@ -29,6 +29,8 @@ def normalize_name(name):
     Normalize player names for merging across sources.
     Removes suffixes, punctuation, and converts to lowercase.
     """
+    if not isinstance(name, str):
+        return ''
     name = re.sub(r'[^a-zA-Z\s]', '', name)  # Remove punctuation
     name = re.sub(r'\b(jr|sr|ii|iii|iv|v)\b', '', name, flags=re.IGNORECASE)  # Remove suffixes
     name = re.sub(r'\s+', ' ', name).strip()  # Remove extra spaces
@@ -223,9 +225,27 @@ def main():
         return
 
 
-    # Normalize names for merging
-    sleeper_df['norm_name'] = sleeper_df['full_name'].apply(normalize_name) if 'full_name' in sleeper_df.columns else sleeper_df['player_id'].astype(str)
-    ktc_df['norm_name'] = ktc_df['name'].apply(normalize_name) if 'name' in ktc_df.columns else ktc_df['details'].astype(str)
+    # Normalize names for merging (robust to column names)
+    # Sleeper: prefer 'full_name', fallback to 'player_id' as string
+    if 'full_name' in sleeper_df.columns:
+        sleeper_df['norm_name'] = sleeper_df['full_name'].apply(normalize_name)
+    elif 'player_id' in sleeper_df.columns:
+        sleeper_df['norm_name'] = sleeper_df['player_id'].astype(str)
+    else:
+        raise ValueError("Sleeper DataFrame missing both 'full_name' and 'player_id' columns.")
+
+    # KTC: prefer 'playerName', fallback to 'name', else use first string column
+    if 'playerName' in ktc_df.columns:
+        ktc_df['norm_name'] = ktc_df['playerName'].apply(normalize_name)
+    elif 'name' in ktc_df.columns:
+        ktc_df['norm_name'] = ktc_df['name'].apply(normalize_name)
+    else:
+        # Fallback: use first string column
+        str_cols = [col for col in ktc_df.columns if ktc_df[col].dtype == object]
+        if str_cols:
+            ktc_df['norm_name'] = ktc_df[str_cols[0]].apply(normalize_name)
+        else:
+            raise ValueError("KTC DataFrame missing 'playerName', 'name', and any string columns for normalization.")
 
     # Merge on normalized name
     merged = pd.merge(
@@ -237,10 +257,11 @@ def main():
         suffixes=('_ktc', '_sleeper')
     )
 
-    # Reorder columns for clarity (KTC, then Sleeper, then norm_name)
-    cols_ktc = [c for c in ktc_df.columns if c != 'norm_name']
-    cols_sleeper = [c for c in sleeper_df.columns if c not in ('norm_name',)]
-    merged = merged[cols_ktc + cols_sleeper + ['norm_name']]
+    # Reorder columns for clarity (KTC, then Sleeper, then norm_name), only include columns that exist
+    cols_ktc = [c for c in ktc_df.columns if c != 'norm_name' and c in merged.columns]
+    cols_sleeper = [c for c in sleeper_df.columns if c not in ('norm_name',) and c in merged.columns]
+    col_order = cols_ktc + cols_sleeper + (['norm_name'] if 'norm_name' in merged.columns else [])
+    merged = merged[col_order]
 
     # Save merged data
     script_dir = os.path.dirname(os.path.abspath(__file__))
