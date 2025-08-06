@@ -22,6 +22,8 @@ env/
 Thumbs.db
 
 # Data outputs
+# (Do not ignore CSVs; these are crucial data files)
+!/data_outputs/*.csv
 !/data_outputs/README.md
 
 # Selenium/ChromeDriver logs
