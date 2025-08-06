@@ -36,6 +36,40 @@ dynasty_gemini_project/
 - **QUICKSTART.md**: Step-by-step setup and usage guide.
 - **DESIGN_OVERVIEW.md**: Project architecture and design rationale.
 
+
+## Python Virtual Environment (Recommended)
+
+It is strongly recommended to use a Python virtual environment (venv) for this project to avoid dependency conflicts and keep your environment clean.
+
+### How to Set Up and Use a venv
+
+1. **Create a virtual environment** (from the project root or `scripts/` folder):
+   ```powershell
+   python -m venv venv
+   ```
+2. **Activate the virtual environment:**
+   - On Windows (PowerShell):
+     ```powershell
+     .\venv\Scripts\Activate.ps1
+     ```
+   - On Windows (cmd):
+     ```cmd
+     venv\Scripts\activate.bat
+     ```
+   - On macOS/Linux:
+     ```sh
+     source venv/bin/activate
+     ```
+3. **Install dependencies:**
+   ```sh
+   pip install -r requirements.txt
+   ```
+4. **Run the project as usual.**
+
+To deactivate the venv, simply run `deactivate` in your terminal.
+
+---
+
 ## Quickstart
 See [QUICKSTART.md](QUICKSTART.md) for step-by-step setup and usage instructions.
 
