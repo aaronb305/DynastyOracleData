@@ -1,0 +1,16 @@
+Analytics: Key Advanced Metrics in Dynasty
+To gain an edge in dynasty fantasy football, managers must look beyond traditional box score stats and leverage advanced analytics. Here are four key metrics that provide deeper insight into player performance and future potential:
+**1. Yards Per Route Run (YPRR):**
+YPRR measures a receiver’s efficiency by dividing total receiving yards by the number of routes run. It captures both opportunity and productivity, making it a strong predictor of future success.
+Formula: $YPRR = \frac{\text{Yards}}{\text{Routes Run}}$
+**2. Target Share:**
+Target share is the percentage of a team’s total pass attempts that go to a specific player. High target share indicates a player is a focal point of the offense, which is especially important for wide receivers and tight ends.
+Formula: $\text{Target Share} = \frac{\text{Player Targets}}{\text{Team Pass Attempts}}$
+**3. Air Yards Share:**
+Air yards represent the total distance the ball travels in the air toward a receiver. Air yards share is the percentage of a team’s total air yards that a player accounts for, highlighting deep-threat ability and offensive role.
+Formula: $\text{Air Yards Share} = \frac{\text{Player Air Yards}}{\text{Team Air Yards}}$
+**4. Breakaway Run Rate:**
+For running backs, breakaway run rate measures the percentage of carries that go for 15+ yards. It reflects a player’s explosiveness and big-play potential, which can separate elite backs from the rest.
+Formula: $\text{Breakaway Run Rate} = \frac{\text{Breakaway Runs}}{\text{Total Carries}}$
+**Summary:**
+Incorporating these metrics into your analysis allows for a more nuanced understanding of player value and upside. They help identify breakout candidates, spot declining assets, and make more informed trade and draft decisions.
