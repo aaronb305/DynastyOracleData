@@ -6,9 +6,15 @@
 - (Recommended) Use a virtual environment for isolation.
 
 ### Create and Activate venv
+
+#### Create the Virtual Environment (only required once)
+If you have not already created a virtual environment, run:
 ```
 python -m venv venv
 ```
+
+#### Activate the Virtual Environment (required for every new terminal session)
+Activate the venv before running any project commands:
 - **Windows (PowerShell):**
   ```
   .\venv\Scripts\Activate.ps1

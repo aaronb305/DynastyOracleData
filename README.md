@@ -4,13 +4,15 @@
 
 ### 1. Create and Activate Virtual Environment
 
-Open a terminal in the project root and run:
 
+#### 1.1 Create the Virtual Environment (only required once)
+If you have not already created a virtual environment, run:
 ```
 python -m venv venv
 ```
 
-Activate the virtual environment:
+#### 1.2 Activate the Virtual Environment (required for every new terminal session)
+Activate the venv before running any project commands:
 - **Windows (PowerShell):**
   ```
   .\venv\Scripts\Activate.ps1
