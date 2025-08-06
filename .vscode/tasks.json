@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Run data_fetcher.py",
+			"command": "python scripts/data_fetcher.py",
+			"group": "build",
+			"problemMatcher": []
+		}
+	]
+}
