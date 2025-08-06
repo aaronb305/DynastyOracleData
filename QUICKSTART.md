@@ -35,8 +35,16 @@ python scripts/data_fetcher.py
 - Raw data: `data_outputs/sleeper_raw.csv`, `data_outputs/ktc_raw.csv`
 
 ## 4. Troubleshooting
+
 - If you see errors about missing modules, ensure your venv is activated and requirements are installed.
 - If you have issues with Selenium or ChromeDriver, ensure Chrome is installed and up to date.
+
+## 5. Deactivate the Virtual Environment
+
+When finished, deactivate the venv:
+```
+deactivate
+```
 
 ---
 For more details, see `README.md`.
