@@ -1,10 +1,15 @@
 """
 data_fetcher.py
 
-This script fetches and merges dynasty fantasy football data from multiple sources:
+This script fetches, cleans, deduplicates, and merges dynasty fantasy football data from multiple sources:
 - Sleeper API: Player info (name, team, age, position, player ID)
 - KeepTradeCut (KTC): Superflex dynasty trade values
 - OverTheCap: Contract info (Contract End Year, 2026 Cap Hit, Potential Out Year)
+
+Data cleaning steps:
+- Deduplicate and filter to only QB, RB, WR, TE for Sleeper and KTC data
+- Merge datasets, only adding KTC fields not present in Sleeper
+- Deduplicate merged data by normalized name and filter to QB/RB/WR/TE
 
 The final merged dataset is saved as 'dynasty_market_data.csv' in the data_outputs/ directory.
 
@@ -217,6 +222,7 @@ def main():
     Fetches, merges, and saves dynasty market data.
     """
 
+    # Fetch data
     sleeper_df = get_sleeper_players()
     ktc_df = get_ktc_player_data()
 
@@ -224,7 +230,9 @@ def main():
         print("\nERROR: Failed to fetch KeepTradeCut data. The KTC API may be down or blocking requests. Exiting.")
         return
 
-
+    # ---------------------------
+    # Data Cleaning: Sleeper
+    # ---------------------------
     # Normalize names for merging (robust to column names)
     # Sleeper: prefer 'full_name', fallback to 'player_id' as string
     if 'full_name' in sleeper_df.columns:
@@ -234,6 +242,15 @@ def main():
     else:
         raise ValueError("Sleeper DataFrame missing both 'full_name' and 'player_id' columns.")
 
+    # Filter to only QB, RB, WR, TE
+    valid_positions = {'QB', 'RB', 'WR', 'TE'}
+    sleeper_df = sleeper_df[sleeper_df['position'].isin(valid_positions)]
+    # Remove duplicates by normalized name
+    sleeper_df = sleeper_df.drop_duplicates(subset=['norm_name'])
+
+    # ---------------------------
+    # Data Cleaning: KeepTradeCut
+    # ---------------------------
     # KTC: prefer 'playerName', fallback to 'name', else use first string column
     if 'playerName' in ktc_df.columns:
         ktc_df['norm_name'] = ktc_df['playerName'].apply(normalize_name)
@@ -247,9 +264,23 @@ def main():
         else:
             raise ValueError("KTC DataFrame missing 'playerName', 'name', and any string columns for normalization.")
 
+    # Filter to only QB, RB, WR, TE
+    if 'position' in ktc_df.columns:
+        ktc_df = ktc_df[ktc_df['position'].isin(valid_positions)]
+    # Remove duplicates by normalized name
+    ktc_df = ktc_df.drop_duplicates(subset=['norm_name'])
+
+    # ---------------------------
+    # Merging
+    # ---------------------------
+    # Only add KTC fields not present in Sleeper
+    ktc_fields = [c for c in ktc_df.columns if c not in sleeper_df.columns and c != 'norm_name']
+    merge_fields = ktc_fields + ["norm_name"]
+    ktc_merge_df = ktc_df[merge_fields]
+
     # Merge on normalized name
     merged = pd.merge(
-        ktc_df,
+        ktc_merge_df,
         sleeper_df,
         how='left',
         left_on='norm_name',
@@ -257,13 +288,24 @@ def main():
         suffixes=('_ktc', '_sleeper')
     )
 
+    # Remove duplicates in merged by normalized name
+    merged = merged.drop_duplicates(subset=['norm_name'])
+
+    # Filter merged to only QB, RB, WR, TE (using Sleeper position if available, else KTC)
+    if 'position' in merged.columns:
+        merged = merged[merged['position'].isin(valid_positions)]
+    elif 'position_ktc' in merged.columns:
+        merged = merged[merged['position_ktc'].isin(valid_positions)]
+
     # Reorder columns for clarity (KTC, then Sleeper, then norm_name), only include columns that exist
-    cols_ktc = [c for c in ktc_df.columns if c != 'norm_name' and c in merged.columns]
+    cols_ktc = [c for c in ktc_fields if c in merged.columns]
     cols_sleeper = [c for c in sleeper_df.columns if c not in ('norm_name',) and c in merged.columns]
     col_order = cols_ktc + cols_sleeper + (['norm_name'] if 'norm_name' in merged.columns else [])
     merged = merged[col_order]
 
-    # Save merged data
+    # ---------------------------
+    # Save outputs
+    # ---------------------------
     script_dir = os.path.dirname(os.path.abspath(__file__))
     out_path = os.path.join(script_dir, '..', 'data_outputs', 'dynasty_market_data.csv')
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
