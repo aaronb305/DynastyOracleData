@@ -31,3 +31,5 @@ chromedriver.log
 
 # Misc
 *.log
+CLAUDE.md
+GEMINI.md
