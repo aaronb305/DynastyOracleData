@@ -161,13 +161,13 @@ LLMs should execute the following shell command to run the tool:
 }
 ```
 
-### MCP Server (FastAPI)
+### MCP Server (Flask)
 
-An MCP server has been set up using FastAPI to expose the `get_dynasty_market_data` tool as a web endpoint. This allows LLMs or other applications to retrieve the latest data via an HTTP request.
+An MCP server has been set up using Flask to expose the `get_dynasty_market_data` tool as a web endpoint. This allows LLMs or other applications to retrieve the latest data via an HTTP request.
 
 **Location:** `mcp_server/main.py`
 
-**Dependencies:** `mcp_server/requirements.txt` (fastapi, uvicorn)
+**Dependencies:** `mcp_server/requirements.txt` (flask)
 
 **How to Run the Server:**
 1.  Activate the virtual environment:
@@ -175,13 +175,13 @@ An MCP server has been set up using FastAPI to expose the `get_dynasty_market_da
     *   Unix/macOS: `source venv/bin/activate`
 2.  Install server dependencies (if not already installed):
     `pip install -r mcp_server/requirements.txt`
-3.  Start the Uvicorn server from the project root directory:
-    `uvicorn mcp_server.main:app --reload`
+3.  Start the Flask development server from the project root directory:
+    `python mcp_server/main.py`
 
 **Endpoint:**
 -   **GET `/dynasty_data`**: Returns the latest dynasty market data as a CSV string.
 
 **Example Usage (HTTP GET Request):**
 ```bash
-curl http://127.0.0.1:8000/dynasty_data
+curl http://127.0.0.1:5000/dynasty_data
 ```

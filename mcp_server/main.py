@@ -1,15 +1,15 @@
 import os
 import subprocess
 import sys
-from fastapi import FastAPI, Response
+from flask import Flask, Response
 
-app = FastAPI()
+app = Flask(__name__)
 
 # Determine the project root directory dynamically
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-@app.get("/dynasty_data", response_class=Response)
-async def get_dynasty_data():
+@app.route("/dynasty_data")
+def get_dynasty_data():
     """
     Fetches the latest dynasty market data and returns it as a CSV string.
     """
@@ -35,9 +35,11 @@ async def get_dynasty_data():
             check=True,
             cwd=PROJECT_ROOT # Run the command from the project root
         )
-        return Response(content=process.stdout, media_type="text/csv")
+        return Response(process.stdout, mimetype="text/csv")
     except subprocess.CalledProcessError as e:
-        return Response(content=f"Error fetching data: {e.stderr}", status_code=500, media_type="text/plain")
+        return Response(f"Error fetching data: {e.stderr}", status=500, mimetype="text/plain")
     except Exception as e:
-        return Response(content=f"An unexpected error occurred: {str(e)}", status_code=500, media_type="text/plain")
+        return Response(f"An unexpected error occurred: {str(e)}", status=500, mimetype="text/plain")
 
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=8000)
