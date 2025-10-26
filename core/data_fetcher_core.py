@@ -210,6 +210,9 @@ def clean_and_merge_data(sleeper_df: pd.DataFrame, ktc_df: pd.DataFrame) -> pd.D
         else:
             raise ValueError("KTC DataFrame missing 'playerName', 'name', and any string columns for normalization.")
 
+    # Filter sleeper_df to only include players present in ktc_df
+    sleeper_df = sleeper_df[sleeper_df['norm_name'].isin(ktc_df['norm_name'])]
+
     if 'position' in ktc_df.columns:
         ktc_df = ktc_df[ktc_df['position'].isin(valid_positions)]
     ktc_df = ktc_df.drop_duplicates(subset=['norm_name'])
