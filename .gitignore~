@@ -33,5 +33,3 @@ chromedriver.log
 *.log
 CLAUDE.md
 GEMINI.md
-.claude/
-.gemini/
