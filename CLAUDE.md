@@ -127,11 +127,13 @@ Core dependencies are in `scripts/requirements.txt`:
 
 ## LLM Tool Integration
 
-### `get_dynasty_market_data` Tool
+This section describes two methods for integrating dynasty market data with LLMs: direct script execution (LLM Tool) and a web server (MCP Server).
 
-The `scripts/data_fetcher_for_gem.py` script is designed to act as a stateless tool for LLMs to retrieve up-to-date dynasty fantasy football market data.
+### 1. Direct LLM Tool (`scripts/data_fetcher_for_gem.py`)
 
-**Purpose:** Fetches, cleans, and merges player data from the Sleeper API and KeepTradeCut rankings, returning the result as a CSV string. This provides LLMs with a current knowledge base of player values.
+This script is designed for LLMs that can directly execute shell commands and process their standard output. It provides a stateless way to retrieve up-to-date dynasty fantasy football market data.
+
+**Purpose:** To allow LLMs to directly invoke the data fetching and cleaning logic as a command-line tool, capturing the results from stdout. This is suitable for environments where direct shell access and output parsing are preferred or necessary.
 
 **Invocation (Shell Command):**
 LLMs should execute the following shell command to run the tool:
@@ -151,16 +153,18 @@ LLMs should execute the following shell command to run the tool:
 **Example LLM Tool Definition (Conceptual):**
 ```json
 {
-  "name": "get_dynasty_market_data",
-  "description": "Fetches current dynasty fantasy football market data (Sleeper API & KeepTradeCut) and returns it as a CSV string.",
+  "name": "get_dynasty_market_data_direct",
+  "description": "Fetches current dynasty fantasy football market data (Sleeper API & KeepTradeCut) and returns it as a CSV string via direct script execution.",
   "command": ".\\venv\\Scripts\\activate.bat && python scripts/data_fetcher_for_gem.py",
   "output_format": "csv"
 }
 ```
 
-### MCP Server (Flask)
+### 2. MCP Server (Flask Application)
 
-An MCP server has been set up using Flask to expose the `get_dynasty_market_data` tool as a web endpoint. This allows LLMs or other applications to retrieve the latest data via an HTTP request.
+This is a Flask web application that exposes the data fetching functionality via an HTTP endpoint. It's suitable for LLMs or other applications that prefer to interact with data through a standard web API.
+
+**Purpose:** To provide a more robust and accessible interface for retrieving dynasty market data, especially for LLMs that interact with web services. This approach can centralize data access, handle authentication, and manage background processes more effectively.
 
 **Location:** `mcp_server/main.py`
 
