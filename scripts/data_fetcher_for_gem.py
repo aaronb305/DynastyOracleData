@@ -55,7 +55,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # If run as a script, just fetch and return the DataFrame (prints shape for confirmation)
+    # If run as a script, fetch and print the DataFrame as CSV to stdout
 
     df = main()
-    print(f"Merged dynasty market data shape: {df.shape}")
+    print(df.to_csv(index=False))
