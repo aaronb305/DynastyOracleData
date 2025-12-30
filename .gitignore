@@ -25,6 +25,8 @@ Thumbs.db
 # (Do not ignore CSVs; these are crucial data files)
 !/data_outputs/*.csv
 !/data_outputs/README.md
+# Ignore generated HTML recaps
+data_outputs/*.html
 
 # Selenium/ChromeDriver logs
 chromedriver.log
